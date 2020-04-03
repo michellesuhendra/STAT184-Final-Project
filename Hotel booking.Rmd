@@ -19,12 +19,70 @@ library(mosaicData)
 #path <- file.path("~", "Absenteeism_at_work_AAA", "Absenteeism_at_work.csv")
 Absent <- read.csv(file = "Absenteeism_at_work_AAA/Absenteeism_at_work.csv", sep = ";")
 HotelBookings <- read.csv(file = "hotel_bookings.csv")
+SmallHB <- sample_n(HotelBookings, size = 1000)
   
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+# When is the best time of year to book a hotel room?
+Out of all the months, the highest average daily rate is in August and the lowest average daily rate is in January. The average daily rate in August is twice as much as that in January. 
+```{r}
+MonthADR <-
+HotelBookings %>%
+  group_by(arrival_date_month) %>%
+  summarise(monthave = mean(adr)) %>%
+  arrange(desc(monthave)) 
+MonthADR
+```
+# How does demand of hotel booking affect average daily rate?
+The highest number of bookinds are made for arrivals in August, July and May, while the lowest is in January, December. Thus, the peak reservations are in the summer months, while there is a smaller number of bookings made in the winter months.  
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+The number of reservations was plotted against the monthly average daily rate. The graph shows that there is a linear correlation between the demand (number of reservations) and the price charged.
+```{r}
+MonthReservation <-
+HotelBookings %>%
+  group_by(arrival_date_month) %>%
+  summarise(reservation_num = n()) %>%
+  arrange(desc(reservation_num))
+MonthReservation
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+MonthADR %>%
+  left_join(MonthReservation, by = c("arrival_date_month" = "arrival_date_month")) %>%
+  ggplot(aes(x = reservation_num, y = monthave)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+  
+```
+
+
+# Does the type of hotel change this trend?
+The monthly average daily rate was plotted against the number of reservations in that month and faceted by the hotel type. The graph shows that the monthly average daily rate increases more significantly as the number of reservations increases in resort hotels compared to city hotels. This suggests that resort hotel prices fluctuate more and to a larger degree in terms of price compared to city hotels.
+```{r}
+MonthADRHotel <-
+HotelBookings %>%
+  group_by(hotel,arrival_date_month) %>%
+  summarise(monthave = mean(adr)) 
+MonthADRHotel
+
+MonthResHotel <-
+HotelBookings %>%
+  group_by(hotel,arrival_date_month) %>%
+  summarise(reservation_num = n()) 
+MonthResHotel
+
+MonthADRHotel %>%
+  left_join(MonthResHotel, by = c("arrival_date_month" = "arrival_date_month", "hotel"="hotel")) %>%
+  ggplot(aes(x = reservation_num, y = monthave)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~hotel)
+```
+
+
+# What is the optimal length of stay to get the best daily rate?
+cmd + opt + I
+```{r}
+HotelBookings <- 
+  HotelBookings %>%
+  mutate(arrivaldate = paste(arrival_date_year,arrival_date_month,arrival_date_week_number, sep = '-'))
+```
 
