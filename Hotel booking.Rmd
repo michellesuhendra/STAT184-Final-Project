@@ -8,10 +8,39 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
 
-### Source
+# Preliminary EDA Rubric
 
-https://archive.ics.uci.edu/ml/datasets/Absenteeism+at+work
-Martiniano, A., Ferreira, R. P., Sassi, R. J., & Affonso, C. (2012). Application of a neuro fuzzy network in prediction of absenteeism at work. In Information Systems and Technologies (CISTI), 7th Iberian Conference on (pp. 1-4). IEEE.
+Criteria	Ratings	Pts
+This criterion is linked to a Learning OutcomeGuiding Question / Research Question stated clearly
+
+This criterion is linked to a Learning OutcomeBecome acquainted with the data sources
+(A) Who, what, where, when, why & (B) accompanying R chunks as necessary to become familiar with each data source
+
+This criterion is linked to a Learning OutcomeExplore intuition related to research question
+(A) informative plots & (B) preliminary observations/intuition about RQ
+
+This criterion is linked to a Learning OutcomeTwo or more data sources
+(A) Primary data must not be loaded from an R package & includes mix of variable types; (B) at least one other data source has been identified and examined
+
+# Research Question
+
+This project aims to discover what time of the year affects the demand of hotel rooms. When is the best time of the year to book a hotel room? What the optimum number of days of stay to get the best prices on one’s hotel booking. The results of this project can be translated to help inform consumer decisions in terms of hotel bookings.  
+
+# Data Source
+Where did you find them? The data set was found from Kaggle. 
+
+Who collected/maintains them? The data is originally from the article Hotel Booking Demand Datasets, written by Nuno Antonio, Ana Almeida, and Luis Nunes for Data in Brief, Volume 22, February 2019.
+
+When & Why were they originally collected? The data was collected in 2019 and was done to analyse hotel booking demand. 
+
+What does a case represent in each data source, and how many total cases are available?
+A case in the hotel booking data set represents one booking reservation and the variables include the date of arrival, average daily rate, length of stay, origin of booker, booker channel among other things. 
+
+DESCRIBE DATA SET #2
+
+What are some of the variables that you plan to use?
+In the first data set (hotel booking demand), we plan to use the average daily rate, length of stay and date of arrival.  
+
 
 https://www.kaggle.com/jessemostipak/hotel-booking-demand
 ```{r message=FALSE, warning=FALSE}
