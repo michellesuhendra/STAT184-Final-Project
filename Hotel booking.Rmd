@@ -13,7 +13,7 @@ https://archive.ics.uci.edu/ml/datasets/Absenteeism+at+work
 Martiniano, A., Ferreira, R. P., Sassi, R. J., & Affonso, C. (2012). Application of a neuro fuzzy network in prediction of absenteeism at work. In Information Systems and Technologies (CISTI), 7th Iberian Conference on (pp. 1-4). IEEE.
 
 https://www.kaggle.com/jessemostipak/hotel-booking-demand
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(DataComputing)
 library(mosaicData)
 #path <- file.path("~", "Absenteeism_at_work_AAA", "Absenteeism_at_work.csv")
@@ -25,6 +25,8 @@ SmallHB <- sample_n(HotelBookings, size = 1000)
 
 # When is the best time of year to book a hotel room?
 Out of all the months, the highest average daily rate is in August and the lowest average daily rate is in January. The average daily rate in August is twice as much as that in January. 
+
+The range of monthly average daily rates of each month is shown in the boxplot below. 
 ```{r}
 MonthADR <-
 HotelBookings %>%
@@ -32,6 +34,16 @@ HotelBookings %>%
   summarise(monthave = mean(adr)) %>%
   arrange(desc(monthave)) 
 MonthADR
+
+HotelBookings %>%
+  filter(adr < 2000) %>% #remove outlier
+  ggplot(aes(x = arrival_date_month, y = adr)) +
+  geom_boxplot(aes(color = arrival_date_month, fill = arrival_date_month), 
+               alpha = 0.25, outlier.size = 1, outlier.colour = "gray") +
+  xlab("Month") + 
+  ylab("Monthly Average Daily Rate") + 
+  facet_wrap(~hotel) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 # How does demand of hotel booking affect average daily rate?
 The highest number of bookinds are made for arrivals in August, July and May, while the lowest is in January, December. Thus, the peak reservations are in the summer months, while there is a smaller number of bookings made in the winter months.  
@@ -83,6 +95,16 @@ cmd + opt + I
 ```{r}
 HotelBookings <- 
   HotelBookings %>%
-  mutate(arrivaldate = paste(arrival_date_year,arrival_date_month,arrival_date_week_number, sep = '-'))
+  mutate(arrivaldate = paste(arrival_date_year,arrival_date_month,arrival_date_week_number, sep = '-')) %>%
+  mutate(totalstay = stays_in_weekend_nights + stays_in_week_nights)
+head(HotelBookings)
+
+HotelBookings %>%
+  filter(adr <2000) %>% #to remove outliers
+  filter(arrival_date_month == "August") %>%
+  ggplot(aes(x = totalstay, y = adr)) + #color = arrival_date_month
+  geom_point(alpha = 0.1, position = "jitter") +
+  geom_smooth() +
+  facet_wrap(~hotel)
 ```
 
