@@ -1,4 +1,5 @@
 ---
+author: "Michelle Suhendra and Benson Wainaina"
 title: "R Notebook"
 output: html_notebook
 ---
@@ -26,7 +27,7 @@ SmallHB <- sample_n(HotelBookings, size = 1000)
 # When is the best time of year to book a hotel room?
 Out of all the months, the highest average daily rate is in August and the lowest average daily rate is in January. The average daily rate in August is twice as much as that in January. 
 
-The range of monthly average daily rates of each month is shown in the boxplot below. 
+The range of monthly average daily rates of each month is shown in the boxplot below, faceted by hotel type. Arranging the x-axis in chronological order, the boxplot shows that the monthly average daily rate increases in the middle of the year and decreases again towards the end of the year. This sharp peak in the average daily rate is much larger Resort Hotels.  
 ```{r}
 MonthADR <-
 HotelBookings %>%
@@ -37,7 +38,7 @@ MonthADR
 
 HotelBookings %>%
   filter(adr < 2000) %>% #remove outlier
-  ggplot(aes(x = arrival_date_month, y = adr)) +
+  ggplot(aes(x=factor(arrival_date_month,levels=month.name), y = adr)) +
   geom_boxplot(aes(color = arrival_date_month, fill = arrival_date_month), 
                alpha = 0.25, outlier.size = 1, outlier.colour = "gray") +
   xlab("Month") + 
@@ -104,7 +105,7 @@ HotelBookings %>%
   filter(arrival_date_month == "August") %>%
   ggplot(aes(x = totalstay, y = adr)) + #color = arrival_date_month
   geom_point(alpha = 0.1, position = "jitter") +
-  geom_smooth() +
+  #geom_smooth() +
   facet_wrap(~hotel)
 ```
 
