@@ -1,7 +1,7 @@
 ---
 author: "Michelle Suhendra and Benson Wainaina"
 title: "R Notebook"
-output: html_notebook
+output: html_document
 ---
 
 # Research Question
@@ -30,7 +30,7 @@ In the first data set (hotel booking demand), we plan to use the average daily r
 ### Second Data Source: Hostel Bookings
 
 ##### Where did you find them? 
-The data set was found on Kaggle (https://www.kaggle.com/jessemostipak/hotel-booking-demand).
+The data set was found on Kaggle (https://www.kaggle.com/koki25ando/hostel-world-dataset).
 
 ##### Who collected/maintains them? 
 The data set was collected by a user on Kaggle, Andy Il.
@@ -56,7 +56,9 @@ HotelBookings <- read.csv(file = "hotel_bookings.csv")
   
 ```
 
-# When is the best time of year to book a hotel room?
+# First Dataset EDA
+
+### When is the best time of year to book a hotel room?
 
 Out of all the months, the highest average daily rate is in August and the lowest average daily rate is in January. The average daily rate in August is twice as much as that in January. 
 
@@ -79,7 +81,7 @@ HotelBookings %>%
   facet_wrap(~hotel) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
-# How does demand of hotel booking affect average daily rate?
+### How does demand of hotel booking affect average daily rate?
 The highest number of bookinds are made for arrivals in August, July and May, while the lowest is in January, December. Thus, the peak reservations are in the summer months, while there is a smaller number of bookings made in the winter months.  
 
 The number of reservations was plotted against the monthly average daily rate. The graph shows that there is a linear correlation between the demand (number of reservations) and the price charged.
@@ -100,7 +102,7 @@ MonthADR %>%
 ```
 
 
-# Does the type of hotel change this trend?
+### Does the type of hotel change this trend?
 
 The monthly average daily rate was plotted against the number of reservations in that month and faceted by the hotel type. The graph shows that the monthly average daily rate increases more significantly as the number of reservations increases in resort hotels compared to city hotels. This suggests that resort hotel prices fluctuate more and to a larger degree in terms of price compared to city hotels.
 
@@ -126,7 +128,7 @@ MonthADRHotel %>%
 ```
 
 
-# What is the optimal length of stay to get the best daily rate?
+### What is the optimal length of stay to get the best daily rate?
 
 ```{r}
 HotelBookings <- 
@@ -143,9 +145,9 @@ HotelBookings %>%
   #geom_smooth() +
   facet_wrap(~hotel)
 ```
-# Second Data Set
+# Second Dataset EDA
 
-# Does hostel appearance affect price?
+### Does hostel appearance affect price?
 Hotel appearance was plotted based on cleanliness agaist value for money and as per the graph there seems to be a linear dependacy between the two. This claim supports the intial assumption we had for does the type of hotel determine the price paid.
 ```{r}
 HostelBookings <- read.csv(file = "Hostel.csv")
