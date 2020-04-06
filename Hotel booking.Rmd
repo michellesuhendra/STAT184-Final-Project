@@ -4,50 +4,55 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-
-
-# Preliminary EDA Rubric
-
-Criteria	Ratings	Pts
-This criterion is linked to a Learning OutcomeGuiding Question / Research Question stated clearly
-
-This criterion is linked to a Learning OutcomeBecome acquainted with the data sources
-(A) Who, what, where, when, why & (B) accompanying R chunks as necessary to become familiar with each data source
-
-This criterion is linked to a Learning OutcomeExplore intuition related to research question
-(A) informative plots & (B) preliminary observations/intuition about RQ
-
-This criterion is linked to a Learning OutcomeTwo or more data sources
-(A) Primary data must not be loaded from an R package & includes mix of variable types; (B) at least one other data source has been identified and examined
-
 # Research Question
 
 This project aims to discover what time of the year affects the demand of hotel rooms. When is the best time of the year to book a hotel room? What the optimum number of days of stay to get the best prices on one’s hotel booking. The results of this project can be translated to help inform consumer decisions in terms of hotel bookings. Additionally, we will use data to determine how other factors such as perceived cleanliness, staff, security and the value for money.
 
 # Data Source
+
 ### First Data Source: Hotel Bookings
 
-Where did you find them? The data set was found from Kaggle. (https://www.kaggle.com/jessemostipak/hotel-booking-demand)
+##### Where did you find them? 
+The data set was found from Kaggle. (https://www.kaggle.com/jessemostipak/hotel-booking-demand)
 
-Who collected/maintains them? The data is originally from the article Hotel Booking Demand Datasets, written by Nuno Antonio, Ana Almeida, and Luis Nunes for Data in Brief, Volume 22, February 2019.
+##### Who collected/maintains them? 
+The data is originally from the article Hotel Booking Demand Datasets, written by Nuno Antonio, Ana Almeida, and Luis Nunes for Data in Brief, Volume 22, February 2019.
 
-When & Why were they originally collected? The data was collected in 2019 and was done to analyse hotel booking demand. 
+##### When & Why were they originally collected? 
+The data was collected in 2019 and was done to analyse hotel booking demand. 
 
-What does a case represent in each data source, and how many total cases are available?
-A case in the hotel booking data set represents one booking reservation and the variables include the date of arrival, average daily rate, length of stay, origin of booker, booker channel among other things. 
+##### What does a case represent in each data source, and how many total cases are available?
+A case in the hotel booking data set represents one booking reservation and the variables include the date of arrival, average daily rate, length of stay, origin of booker, booker channel among other things. There are 119,390 total cases in this data set. 
 
-What are some of the variables that you plan to use?
+##### What are some of the variables that you plan to use?
 In the first data set (hotel booking demand), we plan to use the average daily rate, length of stay and date of arrival.  
 
 ### Second Data Source: Hostel Bookings
 
+##### Where did you find them? 
+The data set was found on Kaggle (https://www.kaggle.com/jessemostipak/hotel-booking-demand).
+
+##### Who collected/maintains them? 
+The data set was collected by a user on Kaggle, Andy Il.
+
+##### When & Why were they originally collected?
+The data was collected in 2018 and was used to analyse over 300 hotels in Japan. The data was originally scraped from HostelWorld.com. The data was prepared for the use of foreign tourists who were planning to visit Japan in the 2020 Olympics, to decide on the best place to stay in Japan. 
+
+##### What does a case represent in each data source, and how many total cases are available?
+A case represents  an individual hotel based variables such as price, star rating and distance from city centre. among others. There are 342 cases in this dataset. 
+
+##### What are some of the variables that you plan to use? 
+
+In the second data set, we plan to use distance, cleaniless and price for our analysis.
+
+
 ```{r message=FALSE, warning=FALSE}
 library(DataComputing)
 library(mosaicData)
-#path <- file.path("~", "Absenteeism_at_work_AAA", "Absenteeism_at_work.csv")
+
 #Absent <- read.csv(file = "Absenteeism_at_work_AAA/Absenteeism_at_work.csv", sep = ";")
 HotelBookings <- read.csv(file = "hotel_bookings.csv")
-SmallHB <- sample_n(HotelBookings, size = 1000)
+#SmallHB <- sample_n(HotelBookings, size = 1000)
   
 ```
 
@@ -138,9 +143,9 @@ HotelBookings %>%
   #geom_smooth() +
   facet_wrap(~hotel)
 ```
-### Second Data Set
+# Second Data Set
 
-# Does hotel appearance affect price?
+# Does hostel appearance affect price?
 Hotel appearance was plotted based on cleanliness agaist value for money and as per the graph there seems to be a linear dependacy between the two. This claim supports the intial assumption we had for does the type of hotel determine the price paid.
 ```{r}
 HostelBookings <- read.csv(file = "Hostel.csv")
