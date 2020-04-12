@@ -53,7 +53,8 @@ library(mosaicData)
 #Absent <- read.csv(file = "Absenteeism_at_work_AAA/Absenteeism_at_work.csv", sep = ";")
 HotelBookings <- read.csv(file = "hotel_bookings.csv")
 #SmallHB <- sample_n(HotelBookings, size = 1000)
-  
+
+HotelBookings
 ```
 
 # First Dataset EDA
@@ -147,10 +148,17 @@ HotelBookings %>%
 ```
 # Second Dataset EDA
 
-### Does hostel appearance affect price?
-Hotel appearance was plotted based on cleanliness agaist value for money and as per the graph there seems to be a linear dependacy between the two. This claim supports the intial assumption we had for does the type of hotel determine the price paid.
 ```{r}
 HostelBookings <- read.csv(file = "Hostel.csv")
+library(rworldmap)
+newmap <- getMap(resolution = "low")
+plot(newmap, xlim = c(130,140), ylim = c(30,45), asp = 1)
+points(HostelBookings$lon, HostelBookings$lat, col = "red", cex = 0.4, labelCountries())
+```
+
+### Does hostel cleanliness affect price?
+Hotel appearance was plotted based on cleanliness agaist value for money and as per the graph there seems to be a linear dependacy between the two. This claim supports the intial assumption we had for does the type of hotel determine the price paid.
+```{r}
 HostelAppear<-
   HostelBookings%>%
   group_by(hostel.name,valueformoney,cleanliness)%>%
@@ -161,4 +169,61 @@ HostelAppear%>%
   geom_point()+
   geom_smooth(method="lm")
 ```
+
+### Does the distance form the city centre have an effect on price? How does this change by city?
+The first graph shows the relationship between the distance from the city centre and the price of the hostel. This graph suggests that there is no relationship between the two factors. However, upon separating the first graph into individual cities with a facet, the second graph shows that this relationship varies by city. In Tokyo and Osaka, as the hostel gets further away from the city centre, the price of the stay decreases. This is what would be expected of large metropolitan cities. On the other, neither Fukuoka-City, Hiroshima nor Kyoto show does trend.
+
+```{r}
+HostelBookings <-
+  HostelBookings %>%
+  mutate(distfromcentre = as.numeric(gsub(pattern = "km from city centre", replacement = "", Distance)))
+HostelBookings %>%
+  filter(price.from < 250000) %>%
+  filter(distfromcentre <20) %>% #to remove hostels that are more than 20km outside the city centre
+  ggplot(aes(x = distfromcentre, y = price.from)) +
+  geom_point() + 
+  geom_smooth(method = "lm") +
+  xlab("Distance from city centre (km)") + ylab("Price")
+
+HostelBookings %>%
+  filter(price.from < 250000) %>%
+  filter(distfromcentre <20) %>% #to remove hostels that are more than 20km outside the city centre
+  ggplot(aes(x = distfromcentre, y = price.from)) +
+  geom_point() + 
+  geom_smooth(method = "lm") +
+  facet_wrap(~City) +
+  xlab("Distance from city centre (km)") + ylab("Price")
+```
+
+### Which hostel variable has the largest effect on its rating band?
+
+First, we determined the distribution of rating bands in this hostel data set. The data fram below shows the largest rating group is that of "Superb", making up 52% of the hostels listed.
+```{r}
+HostelBookings %>%
+  group_by(rating.band) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
+```
+
+Next, we transformed the data set from wide data form to narrow form. This rearrangement ascribed the variables of atmosphere, cleanliness, facilities, location, security and staff under the variable name attribute. The corresponding values associated with these attributes were added the the variable "value". This narrow data was then used to generate a boxplot, faceted by the different attributes and their values. 
+
+The boxplot shows that there are significant differences in each rating band for the attributes listed. Atmosphere, cleanliness, facilities, location, security and staff all play a role in determining the rating band of the hostel. 
+
+```{r}
+library(tidyr)
+NarrowHostelBookings <-
+HostelBookings %>%
+  gather(key = attribute, value = value, atmosphere, cleanliness, facilities, location.y, security, staff)
+
+NarrowHostelBookings %>%
+  filter(rating.band != "Rating") %>% #this removes ratings called "Rating" and NA values
+  ggplot(aes(x = reorder(rating.band, summary.score), y = value, color = rating.band)) +
+  geom_boxplot() +
+  facet_wrap(~attribute) +
+  theme(legend.position = "top") +
+  xlab("Hostel Rating") + ylab("Value") 
+```
+
+
 
