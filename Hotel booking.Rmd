@@ -54,7 +54,6 @@ library(mosaicData)
 HotelBookings <- read.csv(file = "hotel_bookings.csv")
 #SmallHB <- sample_n(HotelBookings, size = 1000)
 
-HotelBookings
 ```
 
 # First Dataset EDA
@@ -64,13 +63,13 @@ HotelBookings
 Out of all the months, the highest average daily rate is in August and the lowest average daily rate is in January. The average daily rate in August is twice as much as that in January. 
 
 The range of monthly average daily rates of each month is shown in the boxplot below, faceted by hotel type. Arranging the x-axis in chronological order, the boxplot shows that the monthly average daily rate increases in the middle of the year and decreases again towards the end of the year. This sharp peak in the average daily rate is much larger Resort Hotels.  
-```{r}
+```{r message=FALSE, warning=FALSE}
 MonthADR <-
 HotelBookings %>%
   group_by(arrival_date_month) %>%
   summarise(monthave = mean(adr)) %>%
   arrange(desc(monthave)) 
-MonthADR
+head(MonthADR)
 
 HotelBookings %>%
   filter(adr < 2000) %>% #remove outlier
@@ -86,13 +85,13 @@ HotelBookings %>%
 The highest number of bookinds are made for arrivals in August, July and May, while the lowest is in January, December. Thus, the peak reservations are in the summer months, while there is a smaller number of bookings made in the winter months.  
 
 The number of reservations was plotted against the monthly average daily rate. The graph shows that there is a linear correlation between the demand (number of reservations) and the price charged.
-```{r}
+```{r message=FALSE, warning=FALSE}
 MonthReservation <-
 HotelBookings %>%
   group_by(arrival_date_month) %>%
   summarise(reservation_num = n()) %>%
   arrange(desc(reservation_num))
-MonthReservation
+head(MonthReservation)
 
 MonthADR %>%
   left_join(MonthReservation, by = c("arrival_date_month" = "arrival_date_month")) %>%
@@ -107,18 +106,18 @@ MonthADR %>%
 
 The monthly average daily rate was plotted against the number of reservations in that month and faceted by the hotel type. The graph shows that the monthly average daily rate increases more significantly as the number of reservations increases in resort hotels compared to city hotels. This suggests that resort hotel prices fluctuate more and to a larger degree in terms of price compared to city hotels.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 MonthADRHotel <-
 HotelBookings %>%
   group_by(hotel,arrival_date_month) %>%
   summarise(monthave = mean(adr)) 
-MonthADRHotel
+head(MonthADRHotel)
 
 MonthResHotel <-
 HotelBookings %>%
   group_by(hotel,arrival_date_month) %>%
   summarise(reservation_num = n()) 
-MonthResHotel
+head(MonthResHotel)
 
 MonthADRHotel %>%
   left_join(MonthResHotel, by = c("arrival_date_month" = "arrival_date_month", "hotel"="hotel")) %>%
@@ -131,12 +130,11 @@ MonthADRHotel %>%
 
 ### What is the optimal length of stay to get the best daily rate?
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 HotelBookings <- 
   HotelBookings %>%
   mutate(arrivaldate = paste(arrival_date_year,arrival_date_month,arrival_date_week_number, sep = '-')) %>%
   mutate(totalstay = stays_in_weekend_nights + stays_in_week_nights)
-head(HotelBookings)
 
 HotelBookings %>%
   filter(adr <2000) %>% #to remove outliers
@@ -148,7 +146,9 @@ HotelBookings %>%
 ```
 # Second Dataset EDA
 
-```{r}
+### Where are the hostels located in Japan?
+
+```{r message=FALSE, warning=FALSE}
 HostelBookings <- read.csv(file = "Hostel.csv")
 library(rworldmap)
 newmap <- getMap(resolution = "low")
@@ -158,12 +158,13 @@ points(HostelBookings$lon, HostelBookings$lat, col = "red", cex = 0.4, labelCoun
 
 ### Does hostel cleanliness affect price?
 Hotel appearance was plotted based on cleanliness agaist value for money and as per the graph there seems to be a linear dependacy between the two. This claim supports the intial assumption we had for does the type of hotel determine the price paid.
-```{r}
+```{r message=FALSE, warning=FALSE}
 HostelAppear<-
   HostelBookings%>%
   group_by(hostel.name,valueformoney,cleanliness)%>%
   summarise(hotel.name=n())
-HostelAppear
+head(HostelAppear)
+
 HostelAppear%>%
   ggplot(aes(y=valueformoney,x=cleanliness))+
   geom_point()+
@@ -171,9 +172,9 @@ HostelAppear%>%
 ```
 
 ### Does the distance form the city centre have an effect on price? How does this change by city?
-The first graph shows the relationship between the distance from the city centre and the price of the hostel. This graph suggests that there is no relationship between the two factors. However, upon separating the first graph into individual cities with a facet, the second graph shows that this relationship varies by city. In Tokyo and Osaka, as the hostel gets further away from the city centre, the price of the stay decreases. This is what would be expected of large metropolitan cities. On the other, neither Fukuoka-City, Hiroshima nor Kyoto show does trend.
+The first graph shows the relationship between the distance from the city centre and the price of the hostel. This graph suggests that there is no relationship between the two factors. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 HostelBookings <-
   HostelBookings %>%
   mutate(distfromcentre = as.numeric(gsub(pattern = "km from city centre", replacement = "", Distance)))
@@ -184,7 +185,11 @@ HostelBookings %>%
   geom_point() + 
   geom_smooth(method = "lm") +
   xlab("Distance from city centre (km)") + ylab("Price")
+```
 
+However, upon separating the first graph into individual cities with a facet, the second graph shows that this relationship varies by city. In Tokyo and Osaka, as the hostel gets further away from the city centre, the price of the stay decreases. This is what would be expected of large metropolitan cities. On the other, neither Fukuoka-City, Hiroshima nor Kyoto show does trend.
+
+```{r message=FALSE, warning=FALSE}
 HostelBookings %>%
   filter(price.from < 250000) %>%
   filter(distfromcentre <20) %>% #to remove hostels that are more than 20km outside the city centre
@@ -195,10 +200,12 @@ HostelBookings %>%
   xlab("Distance from city centre (km)") + ylab("Price")
 ```
 
+
+
 ### Which hostel variable has the largest effect on its rating band?
 
 First, we determined the distribution of rating bands in this hostel data set. The data fram below shows the largest rating group is that of "Superb", making up 52% of the hostels listed.
-```{r}
+```{r message=FALSE, warning=FALSE}
 HostelBookings %>%
   group_by(rating.band) %>%
   summarise(count = n()) %>%
@@ -210,7 +217,7 @@ Next, we transformed the data set from wide data form to narrow form. This rearr
 
 The boxplot shows that there are significant differences in each rating band for the attributes listed. Atmosphere, cleanliness, facilities, location, security and staff all play a role in determining the rating band of the hostel. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(tidyr)
 NarrowHostelBookings <-
 HostelBookings %>%
