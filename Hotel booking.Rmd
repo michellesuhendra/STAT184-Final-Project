@@ -6,7 +6,7 @@ output: html_document
 
 # Research Question
 
-This project aims to discover what time of the year affects the demand of hotel rooms. When is the best time of the year to book a hotel room? What the optimum number of days of stay to get the best prices on one’s hotel booking. The results of this project can be translated to help inform consumer decisions in terms of hotel bookings. Additionally, we will use data to determine how other factors such as perceived cleanliness, staff, security and the value for money.
+This project aims to discover what time of the year affects the demand of hotel rooms. When is the best time of the year to book a hotel room? What the optimum number of days of stay to get the best prices on one’s hotel booking. The results of this project can be translated to help inform consumer decisions in terms of hotel bookings. Additionally, we will use data to determine how other factors such as perceived cleanliness, staff, security and the value for money. Similarly, we will explore similar metrics for hostels in Japan - what factors affect hostel ratings as well as price?
 
 # Data Source
 
@@ -43,16 +43,19 @@ A case represents  an individual hotel based variables such as price, star ratin
 
 ##### What are some of the variables that you plan to use? 
 
-In the second data set, we plan to use distance, cleaniless and price for our analysis.
+In the second data set, we plan to use distance, cleanliness and price for our analysis.
 
 
 ```{r message=FALSE, warning=FALSE}
 library(DataComputing)
 library(mosaicData)
+library(party)
 
-#Absent <- read.csv(file = "Absenteeism_at_work_AAA/Absenteeism_at_work.csv", sep = ";")
+HostelBookings <- read.csv(file = "Hostel.csv")
 HotelBookings <- read.csv(file = "hotel_bookings.csv")
-#SmallHB <- sample_n(HotelBookings, size = 1000)
+
+head(HotelBookings)
+head(HostelBookings)
 
 ```
 
@@ -130,6 +133,8 @@ MonthADRHotel %>%
 
 ### What is the optimal length of stay to get the best daily rate?
 
+There is no clear trend as to the optimal length of stay to get the best daily rate.
+
 ```{r message=FALSE, warning=FALSE}
 HotelBookings <- 
   HotelBookings %>%
@@ -149,7 +154,7 @@ HotelBookings %>%
 ### Where are the hostels located in Japan?
 
 ```{r message=FALSE, warning=FALSE}
-HostelBookings <- read.csv(file = "Hostel.csv")
+
 library(rworldmap)
 newmap <- getMap(resolution = "low")
 plot(newmap, xlim = c(130,140), ylim = c(30,45), asp = 1)
@@ -178,6 +183,7 @@ The first graph shows the relationship between the distance from the city centre
 HostelBookings <-
   HostelBookings %>%
   mutate(distfromcentre = as.numeric(gsub(pattern = "km from city centre", replacement = "", Distance)))
+
 HostelBookings %>%
   filter(price.from < 250000) %>%
   filter(distfromcentre <20) %>% #to remove hostels that are more than 20km outside the city centre
@@ -232,5 +238,20 @@ NarrowHostelBookings %>%
   xlab("Hostel Rating") + ylab("Value") 
 ```
 
+
+We then explored factors that may impact price. It was found that a facility rating of less than 7.9 was likely to have a price of 1961 while higher than 7.9 had a price of 2217. 
+
+```{r}
+CompleteCases <- 
+  HostelBookings %>%
+  filter(price.from < 3000) %>%
+  select(price.from, summary.score, cleanliness, facilities, location.y) %>%
+  na.omit() 
+
+mod1 <- party::ctree(price.from ~ facilities + location.y, data = CompleteCases)
+
+plot(mod1, type = "simple")
+
+```
 
 
